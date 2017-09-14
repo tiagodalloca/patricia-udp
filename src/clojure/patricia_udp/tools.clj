@@ -3,6 +3,8 @@
 
 (defn localhost [] (.getLocalHost InetAddress))
 
+(defn inet-address [s] (.getByName InetAddress s))
+
 (defn message [text port]
   (DatagramPacket. (.getBytes text)
                    (.length text)
@@ -18,11 +20,19 @@
 (defn stop-udp-server [server]
   (.close server))
 
+(defn create-datagram-socket [] (DatagramSocket.))
+
 (defn reachable? [ip timeout] 
   (-> ip InetAddress/getByName (.isReachable timeout)))
 
 (defn empty-message [n]
-  (new DatagramPacket (byte-array n) n))
+  (DatagramPacket. (byte-array n) n))
+
+(defn message [abytes address port]
+  (DatagramPacket. abytes (alength abytes) address port))
+
+(defn inet-address-by-name [name]
+  (InetAddress/getByName name))
 
 ;; (defn start-print-loop []
 ;;   (loop []

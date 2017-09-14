@@ -7,7 +7,8 @@
             [clojure.tools.namespace.repl :refer (refresh refresh-all)]
 
             [patricia-udp.core :as core]
-            [patricia-udp.tools :as tools]))
+            [patricia-udp.tools :as tools]
+            [patricia-udp.tasks :as tasks]))
 
 (defonce server (atom nil))
 (def port 3000)
