@@ -4,4 +4,5 @@
 
 (defn -main 
   [& args]
-  (handle-main (vec args)))
+  (handle-main (vec args))
+  (System/exit 0))

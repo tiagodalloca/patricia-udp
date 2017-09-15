@@ -57,27 +57,22 @@
 
 (defmethod handle-main :status
   [args] 
-  (->> (pmap #(do [% (tools/reachable? % 500)]) ips) 
-       doall
-       (map (fn [[ip r?]]
-              (.write *out* (str ip ": "
-                                 (if r?
-                                   "Conectado"
-                                   "Desconectado")
-                                 \newline))))
-       dosync))
+  (doseq [[ip r?] (->> (pmap #(do [% (tools/reachable? % 500)]) ips) 
+                       (sort-by first))] 
+    (println ip ": " (if r?
+                       "Conectado"
+                       "Desconectado"))))
 
 (defmethod handle-main :wol
-  [args] 
-  (let [ip (args 1)]
-    (if-let [mac (ips-and-macs ip)]
-      (let [addr (tools/inet-address-by-name ip)
-            ds (tools/create-datagram-socket)
-            msg (-> mac PatriciaUDP.Utils/getDPBytes
-                    (tools/message addr default-port))]
-        (.send ds msg)
-        (.close ds))
-      (println "tal pc não está disponível"))))
+  [[_ ip]] 
+  (if-let [mac (ips-and-macs ip)]
+    (let [addr (tools/inet-address-by-name ip)
+          ds (tools/create-datagram-socket)
+          msg (-> mac PatriciaUDP.Utils/getDPBytes
+                  (tools/message addr default-port))]
+      (.send ds msg)
+      (.close ds))
+    (println "tal pc não está disponível")))
 
 (defmethod handle-main :default
   [args]
